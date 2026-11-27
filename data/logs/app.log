@@ -1,0 +1,3 @@
+{"ts": "2026-11-27T17:56:46+0200", "level": "INFO", "logger": "app", "msg": "backend started env=development runner=mock"}
+{"ts": "2026-11-27T17:57:03+0200", "level": "INFO", "logger": "app", "msg": "request", "request_id": "a9b0139db416", "user_id": null, "method": "GET", "path": "/", "status": 404, "ms": 58.7}
+{"ts": "2026-11-27T17:57:03+0200", "level": "INFO", "logger": "app", "msg": "request", "request_id": "e68510ad7a4c", "user_id": null, "method": "GET", "path": "/favicon.ico", "status": 404, "ms": 1.5}
