@@ -1,4 +1,4 @@
-"""Two HTTP apps: loopback operator UI and tunnel-safe worker callbacks."""
+"""Reference operator API on loopback and scoped worker callbacks."""
 from __future__ import annotations
 
 import asyncio
@@ -13,7 +13,7 @@ import time
 from urllib.parse import urlparse, unquote
 
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse
 from starlette.concurrency import run_in_threadpool
 
 from .store import Store, TERMINAL, atomic_json, validate_splat, verify_manifest
@@ -196,7 +196,7 @@ class Bridge:
         if not hmac.compare_digest(token.encode(), ("Bearer " + run["worker_token"]).encode()):
             raise HTTPException(401, "Invalid or superseded run token.")
         if run["status"] in {"failed", "timed_out"}:
-            raise HTTPException(409, "Run is terminal; retry through the local operator UI.")
+            raise HTTPException(409, "Run is terminal; retry through the local operator API.")
         return run
 
     async def receive(self, request: Request, run_id: str, limit: int) -> Path:
@@ -249,10 +249,6 @@ class Bridge:
                 await asyncio.gather(*self.tasks, return_exceptions=True)
 
         app = FastAPI(title="Local reconstruction operator", lifespan=lifespan, docs_url=None, redoc_url=None, openapi_url=None)
-
-        @app.get("/", response_class=HTMLResponse)
-        def index():
-            return (Path(__file__).parent / "index.html").read_text(encoding="utf-8")
 
         @app.post("/api/session")
         async def session(request: Request):

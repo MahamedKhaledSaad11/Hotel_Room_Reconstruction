@@ -197,35 +197,3 @@ test('Stage 2 Sign-off: COLMAP -> Three.js camera poses project real sparse_poin
   sparseThree.geometry.dispose();
   splatHandle.dispose();
 });
-
-test('Stage 2 Sign-off: splatLoader and plyLoader parse real A9 edited scene_edited.splat and scene_edited.ply', () => {
-  const rebuildRoot = path.join(REPO_ROOT, 'fixtures', 'room_fixture', 'rebuild_out');
-  const manifestRaw = JSON.parse(
-    fs.readFileSync(path.join(rebuildRoot, 'run_manifest.json'), 'utf-8')
-  );
-  const viewerTransform = {
-    colmapToThreejsMatrix: manifestRaw.viewer_transform.colmap_to_threejs_matrix,
-    sceneBoundsMin: manifestRaw.viewer_transform.scene_bounds_min,
-    sceneBoundsMax: manifestRaw.viewer_transform.scene_bounds_max,
-  };
-  const transformMatrix = viewerTransformToMatrix4(viewerTransform);
-
-  const editedVersion = manifestRaw.scene_versions.find((v) => v.kind === 'edited');
-  assert.ok(editedVersion, 'Expected edited scene_version in rebuild_out/run_manifest.json');
-
-  const editedSplatBuf = toArrayBuffer(
-    fs.readFileSync(path.join(rebuildRoot, editedVersion.splat_relative_path))
-  );
-  const parsedEditedSplat = parseSplatBuffer(editedSplatBuf, { transformMatrix });
-  assert.ok(parsedEditedSplat.count > 0);
-  assert.equal(parsedEditedSplat.skippedInvalidCount, 0);
-  assert.ok(!parsedEditedSplat.boundingBox.isEmpty());
-
-  const editedPlyBuf = toArrayBuffer(
-    fs.readFileSync(path.join(rebuildRoot, editedVersion.ply_relative_path))
-  );
-  const parsedEditedPly = parsePlyBuffer(editedPlyBuf, { transformMatrix });
-  assert.ok(parsedEditedPly.count > 0);
-  assert.equal(parsedEditedPly.skippedInvalidCount, 0);
-  parsedEditedPly.geometry.dispose();
-});

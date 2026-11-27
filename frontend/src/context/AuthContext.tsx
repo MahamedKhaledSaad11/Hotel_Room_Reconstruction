@@ -1,4 +1,10 @@
-import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 import { AtelierSettings, UserPracticeRole, UserProfile } from '../types';
 import { INITIAL_USER } from '../data/mockData';
 import {
@@ -43,20 +49,29 @@ interface AuthContextValue {
   sessionId: string;
   recoveryEmail: string;
   settings: AtelierSettings;
-  signIn: (email: string, password: string, remember?: boolean) => Promise<void>;
+  signIn: (
+    email: string,
+    password: string,
+    remember?: boolean
+  ) => Promise<void>;
   signUp: (payload: {
     fullName: string;
     email: string;
     password: string;
     role: UserPracticeRole;
   }) => Promise<void>;
-  signInWithDemoProvider: (provider: 'Google' | 'Apple' | 'Studio SAML') => void;
+  signInWithDemoProvider: (
+    provider: 'Google' | 'Apple' | 'Studio SAML'
+  ) => void;
   enterDemoSandbox: () => void;
   signOut: () => void;
   requestPasswordReset: (email: string) => Promise<string | undefined>;
   completePasswordReset: (newPassword: string, token?: string) => Promise<void>;
   updateProfile: (updates: Partial<UserProfile>) => Promise<void>;
-  changePassword: (currentPassword: string, newPassword: string) => Promise<void>;
+  changePassword: (
+    currentPassword: string,
+    newPassword: string
+  ) => Promise<void>;
   updateSettings: (updates: Partial<AtelierSettings>) => void;
   setDemoMode: (enabled: boolean) => void;
 }
@@ -64,7 +79,10 @@ interface AuthContextValue {
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 function readDemoUser(): UserProfile {
-  const stored = safeReadJson<Partial<UserProfile>>(STORAGE_KEYS.user, INITIAL_USER);
+  const stored = safeReadJson<Partial<UserProfile>>(
+    STORAGE_KEYS.user,
+    INITIAL_USER
+  );
   return {
     ...INITIAL_USER,
     accountRole: 'member',
@@ -73,7 +91,6 @@ function readDemoUser(): UserProfile {
       'project:write',
       'project:delete',
       'project:share',
-      'edit:write',
       'profile:write',
     ],
     ...stored,
@@ -86,10 +103,14 @@ function computeDemoMode(_s: AtelierSettings): boolean {
 
 function isDemoToken(token: string | null): boolean {
   if (!token) return false;
-  return token.startsWith('atelier-demo-') || token.startsWith('atelier-oauth-');
+  return (
+    token.startsWith('atelier-demo-') || token.startsWith('atelier-oauth-')
+  );
 }
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const { showToast } = useToast();
   const [sessionId, setSessionId] = useState<string>(() => {
     // Purge legacy v1 demo settings/tokens so returning browsers never enter stale demo mode
@@ -177,12 +198,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
   }, [showToast]);
 
-  const signIn = useCallback(async (email: string, password: string, remember = true) => {
-    const res = await api.login(email, password, remember);
-    setUser(res.user);
-    setIsAuthenticated(true);
-    safeStorageRemove(STORAGE_KEYS.signedOut);
-  }, []);
+  const signIn = useCallback(
+    async (email: string, password: string, remember = true) => {
+      const res = await api.login(email, password, remember);
+      setUser(res.user);
+      setIsAuthenticated(true);
+      safeStorageRemove(STORAGE_KEYS.signedOut);
+    },
+    []
+  );
 
   const signUp = useCallback(
     async (payload: {
@@ -206,12 +230,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   );
 
   const enterDemoSandbox = useCallback(() => {
-    showToast('Demo Sandbox is disabled in production builds. Please sign in with your account.', 'warning');
+    showToast(
+      'Demo Sandbox is disabled in production builds. Please sign in with your account.',
+      'warning'
+    );
   }, [showToast]);
 
   const signInWithDemoProvider = useCallback(
     (_provider: 'Google' | 'Apple' | 'Studio SAML') => {
-      showToast('OAuth demo pass is disabled. Please sign in with your email and password.', 'warning');
+      showToast(
+        'OAuth demo pass is disabled. Please sign in with your email and password.',
+        'warning'
+      );
     },
     [showToast]
   );
@@ -263,10 +293,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     [demoMode]
   );
 
-  const changePassword = useCallback(async (currentPassword: string, newPassword: string) => {
-    const res = await api.changePassword(currentPassword, newPassword);
-    setUser(res.user);
-  }, []);
+  const changePassword = useCallback(
+    async (currentPassword: string, newPassword: string) => {
+      const res = await api.changePassword(currentPassword, newPassword);
+      setUser(res.user);
+    },
+    []
+  );
 
   const updateSettings = useCallback((updates: Partial<AtelierSettings>) => {
     setSettings((prev) => {

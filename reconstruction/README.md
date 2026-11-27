@@ -1,28 +1,10 @@
 # Room video reconstruction
 
-The model takes a video and a fresh output directory. The notebook runs the model on a CUDA GPU. A separate local page uploads a video to the operator's Kaggle account, reports actual job progress, and retrieves the scene. All three entry points use the same pipeline.
+The pipeline takes a video and a fresh output directory. The notebook runs the pipeline on a CUDA GPU. The backend dispatcher submits private Kaggle jobs, reads progress and downloads verified scenes. The application UI lives in ../frontend/.
 
 Backend integration starts with [INTEGRATION.md](INTEGRATION.md), including dispatch, progress, output verification and frontend asset mapping.
 
-## Start the upload page
-
-From the repository root, use Python 3.11+ with an authenticated Kaggle CLI, access to a T4 and notebook Internet access. Keep the local process running while uploading or retrieving results.
-
-```powershell
-python -m pip install -r reconstruction/requirements-bridge.txt
-kaggle kernels list --mine --page-size 1
-python -m reconstruction.bridge --open
-```
-
-Select a video and press **Upload and reconstruct**. The default transport creates one private input dataset and one private notebook for the attempt. The operator page is bound to loopback. It polls Kaggle for status and available training events, then downloads and verifies the splat and manifest. Kaggle retains its copies in your account. Refreshing the page recovers the latest run from disk. If the browser does not open, use the private local URL printed by the command. [Kaggle authentication](https://github.com/Kaggle/kaggle-cli/blob/main/docs/authentication.md) · [Bridge endpoints and recovery](bridge/README.md)
-
 ## Run the notebook directly
-
-To explore the locally generated scenes in the browser, run the command below. Select Video 0 or Video 1 at the top. Drag inside the scene to look around, use W/A/S/D or the arrow keys to move and Q/E to move vertically. These use the physical key positions with either an Arabic or English keyboard layout. Alternatively, hold the movement buttons in the lower left with a mouse or touch. The speed slider adjusts movement and Return to start restores the original camera. To open another output, pass its directory using `--run`.
-
-```powershell
-python -m reconstruction.viewer --run PATH_TO_DOWNLOADED_RUN --open
-```
 
 Upload [reconstruction.ipynb](kaggle/reconstruction.ipynb) as a private Kaggle notebook. Attach the video as an input, select a T4 and enable Internet. In the configuration cell, set `VIDEO_PATH` to a file path or a unique filename among the attached inputs. Run all cells. The environment bootstrap verifies a real CUDA rasterization and backward pass before training. Download the scene from the notebook output under `run/`.
 
@@ -56,7 +38,7 @@ The bridge downloads the two viewer files. The notebook also retains the interme
 ## Acceptance
 
 1. Develop on `Video_0.mp4`. Compare the shelves and fabric detail in the held-out render/reference pairs. The registered poses may use all frames. Held-out images do not enter the Gaussian training loss.
-2. Freeze settings and upload `Video_1.mp4` through the operator page. Verify its newly computed output with Node 24+ and the existing frontend dependencies installed.
+2. Freeze settings and process `Video_1.mp4` through the backend dispatcher. Verify its newly computed output with Node 24+ and the frontend dependencies installed.
 
    ```sh
    node reconstruction/check_viewer.mjs PATH_TO_DIRECTORY_WITH_SCENE_AND_MANIFEST

@@ -7,12 +7,11 @@ import { AtelierModal } from '../components/modals/InfoModals';
 import { useAuth } from '../context/AuthContext';
 import { useProjects } from '../context/ProjectsContext';
 import { useToast } from '../context/ToastContext';
-import { DEFAULT_SAMPLED_FRAMES } from '../data/mockData';
 import { api } from '../services/api';
 import { Project, ProjectShareDTO } from '../types';
 
 type FilterTab = 'all' | 'living' | 'kitchen' | 'bedroom' | 'draft';
-type SortOption = 'recent' | 'name' | 'area';
+type SortOption = 'recent' | 'name';
 type ViewMode = 'grid' | 'list';
 
 export const SpacesPage: React.FC = () => {
@@ -92,7 +91,6 @@ export const SpacesPage: React.FC = () => {
 
     return [...list].sort((a, b) => {
       if (sortBy === 'name') return a.name.localeCompare(b.name);
-      if (sortBy === 'area') return b.areaSqm - a.areaSqm;
       return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
     });
   }, [projects, activeFilter, searchQuery, sortBy]);
@@ -200,14 +198,13 @@ export const SpacesPage: React.FC = () => {
             <div className="max-w-2xl">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-container text-primary text-[11px] font-semibold tracking-wide uppercase mb-3">
                 <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                {demoMode ? 'Demo Atelier Sandbox' : 'Live Session Collection'}
+                {'Live Session Collection'}
               </div>
               <h1 className="font-headline text-4xl sm:text-5xl font-normal text-on-surface tracking-tight leading-tight">
                 My Spaces
               </h1>
               <p className="mt-2.5 text-base sm:text-lg text-on-surface-variant font-light leading-relaxed">
-                Interactive 3D rooms captured from your phone videos. Walk through and redesign
-                furniture in real-time.
+                Interactive 3D rooms captured from your phone videos. Explore your reconstructed spaces from different viewpoints.
               </p>
             </div>
 
@@ -279,7 +276,6 @@ export const SpacesPage: React.FC = () => {
               >
                 <option value="recent">Sort: Recent</option>
                 <option value="name">Sort: Name A–Z</option>
-                <option value="area">Sort: Largest Area</option>
               </select>
 
               <div className="flex items-center bg-surface-container-low border border-border-sand rounded-full p-1 shrink-0">
@@ -400,7 +396,7 @@ export const SpacesPage: React.FC = () => {
                           <>
                             <span className="w-2 h-2 rounded-full bg-emerald-600" />
                             <span className="text-[11px] font-semibold text-on-surface">
-                              {project.hasRestyle ? 'Restyled • Ready' : 'Ready to Explore'}
+                              Ready to Explore
                             </span>
                           </>
                         )}
@@ -475,7 +471,7 @@ export const SpacesPage: React.FC = () => {
                       {isProcessing && (
                         <div className="w-full flex flex-col gap-1.5">
                           <div className="flex justify-between text-[11px] font-medium text-on-surface-variant">
-                            <span>Building photorealistic 3D Gaussian splats</span>
+                            <span>Reconstructing captured room geometry</span>
                             <span>{project.progress}%</span>
                           </div>
                           <div className="w-full h-1.5 bg-surface-container rounded-full overflow-hidden">
@@ -499,14 +495,7 @@ export const SpacesPage: React.FC = () => {
                               </span>
                               <span>Step Inside 3D</span>
                             </Link>
-                            <Link
-                              to={`/studio/${project.id}?mode=edit`}
-                              title="Redesign Furniture"
-                              className="py-2.5 px-3 rounded-full bg-surface-container-low hover:bg-surface-container text-on-surface-variant hover:text-on-surface font-medium text-xs flex items-center gap-1 border border-border-sand transition-all"
-                            >
-                              <span className="material-symbols-outlined text-[16px]">chair</span>
-                              <span className="hidden sm:inline">Redesign</span>
-                            </Link>
+
                           </>
                         )}
 
@@ -521,15 +510,7 @@ export const SpacesPage: React.FC = () => {
                               </span>
                               <span>Live Progress</span>
                             </Link>
-                            <button
-                              type="button"
-                              disabled
-                              title="Processing in progress"
-                              className="py-2.5 px-3 rounded-full bg-surface-container-low text-on-surface-variant opacity-60 cursor-not-allowed font-medium text-xs flex items-center gap-1 border border-border-sand"
-                            >
-                              <span className="material-symbols-outlined text-[16px]">chair</span>
-                              <span className="hidden sm:inline">Redesign</span>
-                            </button>
+
                           </>
                         )}
 
@@ -633,9 +614,7 @@ export const SpacesPage: React.FC = () => {
         {shareProject && (
           <div className="space-y-4 text-xs">
             <p className="text-on-surface-variant">
-              {demoMode
-                ? 'Demo Sandbox walkthrough preview link:'
-                : 'Generate a revocable read-only link so clients can explore this 3D room in any browser without signing in.'}
+              {'Generate a revocable read-only link so clients can explore this 3D room in any browser without signing in.'}
             </p>
 
             {!demoMode && (
@@ -731,27 +710,7 @@ export const SpacesPage: React.FC = () => {
       >
         {framesProject && (
           <div className="space-y-4">
-            {demoMode ? (
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                {DEFAULT_SAMPLED_FRAMES.slice(0, 6).map((frame) => (
-                  <div
-                    key={frame.id}
-                    className="rounded-xl overflow-hidden border border-border-sand bg-surface-container-low"
-                  >
-                    <div className="relative h-24">
-                      <SafeImage
-                        src={frame.imageUrl}
-                        alt={`Frame ${frame.index}`}
-                        className="w-full h-full object-cover"
-                      />
-                      <span className="absolute bottom-1.5 left-1.5 px-2 py-0.5 rounded-full bg-black/60 text-white text-[10px]">
-                        {frame.timestampLabel}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
+            {(
               <div className="rounded-xl border border-border-sand bg-surface-container-low p-4 text-xs space-y-1.5">
                 <p className="font-semibold text-on-surface">
                   Video: {framesProject.videoFileName || 'Not yet uploaded'}

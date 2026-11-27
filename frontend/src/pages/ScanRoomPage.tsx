@@ -36,7 +36,6 @@ export const ScanRoomPage: React.FC = () => {
   );
   const [category, setCategory] = useState<ProjectCategory>('living');
   const [qualityMode, setQualityMode] = useState<QualityMode>('atelier');
-  const [autoDimensions, setAutoDimensions] = useState(true);
   const [fps, setFps] = useState<1 | 2 | 3 | 4>(2);
   const [maxLongSide, setMaxLongSide] = useState<640 | 768 | 960>(960);
   const [dropBlurryFrames, setDropBlurryFrames] = useState(true);
@@ -149,7 +148,6 @@ export const ScanRoomPage: React.FC = () => {
       roomName,
       category,
       qualityMode,
-      autoDimensions,
       fps,
       maxLongSide,
       dropBlurryFrames,
@@ -204,7 +202,7 @@ export const ScanRoomPage: React.FC = () => {
             </h1>
             <p className="text-base sm:text-lg text-on-surface-variant leading-relaxed">
               Simply walk around your room recording a continuous smooth video. We automatically
-              turn it into an editable, walkable 3D space with accurate real-world dimensions.
+              turn it into a 3D scene you can explore in your browser.
             </p>
           </div>
 
@@ -621,8 +619,7 @@ export const ScanRoomPage: React.FC = () => {
                         </span>
                       </div>
                       <p className="text-xs text-on-surface-variant">
-                        Ultra Photoreal 3D (15k–30k 3DGS iterations) with true-to-life reflections,
-                        wallpaper, and fabric grain (~4 mins).
+                        A longer reconstruction run for exploring room details. Processing time depends on the video and available GPU.
                       </p>
                     </div>
                   </button>
@@ -653,44 +650,18 @@ export const ScanRoomPage: React.FC = () => {
                           Fast Sketch
                         </span>
                         <span className="text-[11px] font-medium text-on-surface-variant">
-                          ~90 seconds
+                          Shorter run
                         </span>
                       </div>
                       <p className="text-xs text-on-surface-variant">
-                        Quick spatial preview (7k iterations). Perfect for testing scale, layout
-                        arrangements, and door clearances.
+                        A shorter reconstruction run for previewing the captured room and checking coverage.
                       </p>
                     </div>
                   </button>
                 </div>
               </div>
 
-              <div className="bg-surface-container rounded-xl p-4 border border-outline-variant/40 flex items-center justify-between gap-4">
-                <div className="flex items-start gap-3">
-                  <span className="material-symbols-outlined text-secondary text-[22px] mt-0.5">
-                    straighten
-                  </span>
-                  <div>
-                    <span className="text-sm font-semibold text-on-surface block">
-                      Automatic Room Dimensions
-                    </span>
-                    <span className="text-xs text-on-surface-variant leading-snug block mt-0.5">
-                      Detects ceilings, wall lengths, and standard door heights (Metric &amp;
-                      Imperial).
-                    </span>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  aria-pressed={autoDimensions}
-                  onClick={() => setAutoDimensions((v) => !v)}
-                  className={`w-12 h-7 rounded-full p-0.5 transition-colors flex items-center shrink-0 cursor-pointer shadow-inner ${
-                    autoDimensions ? 'bg-primary justify-end' : 'bg-outline-variant justify-start'
-                  }`}
-                >
-                  <span className="w-6 h-6 rounded-full bg-white shadow-sm" />
-                </button>
-              </div>
+              <p className="rounded-xl border border-border-sand bg-surface-container p-4 text-xs text-on-surface-variant">Keep the camera steady and capture overlapping views. Reconstruction scale does not provide measured room dimensions.</p>
 
               {uploadError && (
                 <div

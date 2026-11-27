@@ -96,7 +96,7 @@ export const LoginPage: React.FC = () => {
                   wb_sunny
                 </span>
                 <span className="text-[11px] font-semibold text-on-surface">
-                  10:45 AM Natural Light
+                  Captured room lighting
                 </span>
               </div>
             </div>
@@ -111,7 +111,7 @@ export const LoginPage: React.FC = () => {
                     Spatial Capture Matrix
                   </span>
                   <span className="text-xs text-on-surface font-semibold">
-                    9.4M Splat Radiance Points • 60 FPS
+                    Video capture · 3D walkthrough
                   </span>
                 </div>
               </div>
@@ -157,7 +157,7 @@ export const LoginPage: React.FC = () => {
                 Welcome back to your atelier
               </h1>
               <p className="text-sm text-on-surface-muted leading-relaxed">
-                Sign in to access your scanned spaces, furniture restyling, and 3D walkthroughs.
+                Sign in to access your scanned spaces and 3D walkthroughs.
               </p>
             </div>
 

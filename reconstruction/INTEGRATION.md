@@ -9,10 +9,9 @@ Clone the repository and run commands from its root. Use Python 3.11+ on the bac
 ```sh
 python -m pip install -r reconstruction/requirements-bridge.txt
 kaggle kernels list --mine --page-size 1
-python -m reconstruction.bridge --open
 ```
 
-Configure your own Kaggle account with the [official authentication instructions](https://github.com/Kaggle/kaggle-cli/blob/main/docs/authentication.md), enable Internet for notebooks and ensure the account has access to a T4. Keep credentials in the deployment's secret storage. Each attempt creates a private dataset and notebook in that account. Input upload and notebook initialization can take several minutes before reconstruction begins.
+Configure your own Kaggle account with the [official authentication instructions](https://github.com/Kaggle/kaggle-cli/blob/main/docs/authentication.md), enable Internet for notebooks and ensure the account has access to a T4. Keep credentials in the deployment's secret storage. Each attempt creates a private dataset and notebook in that account. Input upload and notebook initialization can take several minutes before reconstruction begins. For the application UI, start the [main frontend](../frontend/README.md).
 
 ## Call from your job worker
 
@@ -83,13 +82,12 @@ Upload the verified scene to your persistent file or object storage and return i
 
 The manifest contains `viewer_transform`, `initial_camera`, `cameras`, `frames`, `gaussian_count` and `metrics`. It includes the splat's SHA-256 and byte count. Gaussian positions remain in COLMAP coordinates. Apply `viewer_transform.colmap_to_threejs_matrix` once when loading. The initial camera and scene bounds are already in viewer coordinates. SfM scale is arbitrary.
 
-The frontend mapping currently lives in [api.ts](../frontend/src/services/api.ts). Reuse its scene DTO and the existing splat loader. The local [viewer](viewer/) accepts your downloaded output directory.
+The frontend mapping lives in [api.ts](../frontend/src/services/api.ts). Reuse its scene DTO and existing splat loader. Supply the scene URLs and camera metadata through your project scene endpoint. View the result using the main frontend.
 
 ```sh
 cd frontend
 npm install
 cd ..
-python -m reconstruction.viewer --run /data/results/task-001/run --open
 node reconstruction/check_viewer.mjs /data/results/task-001/run
 ```
 

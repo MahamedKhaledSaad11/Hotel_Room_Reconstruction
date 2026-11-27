@@ -104,7 +104,7 @@ export const ForgotPasswordPage: React.FC = () => {
                     <span className="text-xs text-surface-variant/90">256-Bit Spatial Guard</span>
                   </div>
                   <p className="font-headline text-xl text-inverse-on-surface leading-snug">
-                    Your neural scans, furniture restylings &amp; light studies remain undisturbed.
+                    Your uploaded videos and reconstructed rooms remain in your account.
                   </p>
                   <div className="pt-2 flex items-center gap-3">
                     <div className="flex -space-x-2">
@@ -141,7 +141,7 @@ export const ForgotPasswordPage: React.FC = () => {
                   {
                     num: '01',
                     title: 'Check your studio inbox',
-                    desc: 'We send a transient cryptographic passkey link within moments.',
+                    desc: 'Request a password reset link for your account.',
                   },
                   {
                     num: '02',

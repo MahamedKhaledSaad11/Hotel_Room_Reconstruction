@@ -20,16 +20,13 @@ export const ProgressPage: React.FC = () => {
   const {
     tasks,
     activeTaskId,
-    pauseTask,
-    resumeTask,
     cancelTask,
-    fastForwardTask,
     refreshTaskFromBackend,
   } = useProjects();
   const { showToast } = useToast();
   const navigate = useNavigate();
 
-  const [showTelemetry, setShowTelemetry] = useState(!demoMode);
+  const showTelemetry = true;
   const [notifyActive, setNotifyActive] = useState(false);
   const [fetchingTask, setFetchingTask] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
@@ -89,7 +86,7 @@ export const ProgressPage: React.FC = () => {
   const stages: StageDetail[] = useMemo(() => {
     if (!task) return [];
     const currentIdx = STAGE_ORDER.indexOf(task.stage);
-    const isAllDone = task.status === 'completed' || task.progress >= 100;
+    const isAllDone = task.status === 'completed';
     const isQueued = task.status === 'queued';
 
     const defs: Omit<StageDetail, 'status'>[] = [
@@ -211,7 +208,7 @@ export const ProgressPage: React.FC = () => {
     );
   }
 
-  const isCompleted = task.status === 'completed' || task.progress >= 100;
+  const isCompleted = task.status === 'completed';
   const isQueued = task.status === 'queued';
   const isPaused = task.status === 'paused';
   const isCancelled = task.status === 'cancelled';
@@ -319,7 +316,7 @@ export const ProgressPage: React.FC = () => {
                     ? `Measured Peak VRAM: ${task.peakVramGb.toFixed(2)} GB`
                     : isQueued
                       ? 'Waiting for worker telemetry...'
-                      : 'Running on GPU worker — awaiting VRAM telemetry'}
+                      : 'Awaiting worker resource telemetry'}
                   {task.wallTimeSec && task.wallTimeSec > 0
                     ? ` • Elapsed ${task.wallTimeSec.toFixed(1)}s`
                     : ''}
@@ -361,26 +358,7 @@ export const ProgressPage: React.FC = () => {
                     !isCancelled &&
                     !isError && (
                       <>
-                        {demoMode && (
-                          <button
-                            type="button"
-                            onClick={() => {
-                              if (isPaused) {
-                                resumeTask(task.id);
-                                showToast('Reconstruction resumed', 'info');
-                              } else {
-                                pauseTask(task.id);
-                                showToast('Reconstruction paused', 'warning');
-                              }
-                            }}
-                            className="px-4 py-2 rounded-xl bg-surface-container-high hover:bg-surface-container-highest text-on-surface text-xs font-medium transition-all flex items-center gap-1.5 border border-outline-variant/30"
-                          >
-                            <span className="material-symbols-outlined text-[15px]">
-                              {isPaused ? 'play_circle' : 'pause_circle'}
-                            </span>
-                            <span>{isPaused ? 'Resume Scan' : 'Pause Scan'}</span>
-                          </button>
-                        )}
+
 
                         <button
                           type="button"
@@ -391,19 +369,7 @@ export const ProgressPage: React.FC = () => {
                           {cancelling ? 'Cancelling...' : 'Cancel'}
                         </button>
 
-                        {demoMode && (
-                          <button
-                            type="button"
-                            onClick={() => {
-                              fastForwardTask(task.id);
-                              showToast('3D room finalized and ready to explore!', 'success');
-                            }}
-                            className="px-3.5 py-2 rounded-xl bg-tertiary-fixed hover:bg-tertiary-fixed-dim text-on-tertiary-fixed text-xs font-semibold transition-all"
-                            title="Jump to completion for quick walkthrough preview"
-                          >
-                            Fast-Complete Demo
-                          </button>
-                        )}
+
                       </>
                     )
                   )}
@@ -540,18 +506,7 @@ export const ProgressPage: React.FC = () => {
                   </div>
                 </div>
 
-                {demoMode && (
-                  <button
-                    type="button"
-                    onClick={() => setShowTelemetry((v) => !v)}
-                    className="px-3 py-1.5 rounded-full bg-surface-container hover:bg-surface-container-high text-xs font-medium text-on-surface flex items-center gap-1.5 transition-colors"
-                  >
-                    <span className="material-symbols-outlined text-[15px] text-primary">
-                      {showTelemetry ? 'view_in_ar' : 'terminal'}
-                    </span>
-                    <span>{showTelemetry ? 'Visual Preview' : 'Pipeline Logs'}</span>
-                  </button>
-                )}
+
               </div>
 
               {showTelemetry || !demoMode ? (
@@ -711,7 +666,7 @@ export const ProgressPage: React.FC = () => {
                     notifications_active
                   </span>
                   <span className="text-xs text-on-surface-muted">
-                    We&apos;ll notify you the moment your 3D room is interactive!
+                    Show a completion alert while this page is open.
                   </span>
                 </div>
                 <button
@@ -721,7 +676,7 @@ export const ProgressPage: React.FC = () => {
                     showToast(
                       notifyActive
                         ? 'Completion alert muted'
-                        : 'You will be alerted as soon as the 3D room is ready!',
+                        : 'A completion alert will appear in this tab.',
                       'success'
                     );
                   }}

@@ -131,7 +131,7 @@ export const SignUpPage: React.FC = () => {
                 </span>
                 <span className="w-1.5 h-1.5 rounded-full bg-tertiary-deep" />
                 <span className="text-[10px] font-semibold text-tertiary-deep uppercase">
-                  60 FPS Real-time
+                  Browser walkthrough
                 </span>
               </div>
 
@@ -144,7 +144,7 @@ export const SignUpPage: React.FC = () => {
                     Spatial Layer
                   </p>
                   <p className="text-xs text-on-surface font-medium">
-                    Interactive Furniture Swapping
+                    Explore reconstructed rooms
                   </p>
                 </div>
               </div>
@@ -155,10 +155,10 @@ export const SignUpPage: React.FC = () => {
                 </div>
                 <div>
                   <p className="text-[10px] font-semibold text-outline uppercase tracking-wider">
-                    Lighting Mode
+                    Scene appearance
                   </p>
                   <p className="text-xs text-on-surface font-medium">
-                    True-to-Life Daylight Calibration
+                    Captured scene appearance
                   </p>
                 </div>
               </div>
@@ -168,7 +168,7 @@ export const SignUpPage: React.FC = () => {
                   auto_awesome
                 </span>
                 <span className="text-xs text-on-surface font-semibold">
-                  Instant 3D Gaussian Splats
+                  3D Gaussian room reconstruction
                 </span>
               </div>
 
@@ -278,8 +278,7 @@ export const SignUpPage: React.FC = () => {
                   Begin creating spatial rooms
                 </h1>
                 <p className="text-xs text-outline mt-1 leading-relaxed">
-                  Join over 14,000 interior designers, stylists, and homeowners capturing real
-                  spaces.
+                  Create an account to upload room videos and explore your reconstructed spaces.
                 </p>
               </div>
 
@@ -538,7 +537,7 @@ export const SignUpPage: React.FC = () => {
               <span className="material-symbols-outlined text-[16px] text-secondary">
                 cloud_done
               </span>
-              Instant cloud generation
+              GPU reconstruction
             </span>
           </div>
         </div>

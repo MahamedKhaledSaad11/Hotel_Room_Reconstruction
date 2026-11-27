@@ -1,8 +1,7 @@
-"""Run the local upload UI using private Kaggle storage or optional HTTPS worker callbacks."""
+"""Run the reference reconstruction API using private Kaggle storage or worker callbacks."""
 import argparse
 import asyncio
 from pathlib import Path
-import webbrowser
 
 import uvicorn
 
@@ -20,8 +19,8 @@ async def serve(args):
                                      pose_estimator=args.pose_estimator),
                     timeout=args.heartbeat_timeout, max_runtime=args.max_runtime,
                     max_upload_bytes=args.max_upload_mib * 1024**2)
-    url = f"http://127.0.0.1:{args.operator_port}/#" + bridge.store.operator_secret
-    print(f"Private local operator: {url}")
+    print(f"Local operator API: http://127.0.0.1:{args.operator_port}")
+    print(f"Operator key file: {bridge.store.root / 'operator-secret.txt'}")
     if args.public_url:
         print(f"Tunnel ONLY http://127.0.0.1:{args.worker_port} to {args.public_url}")
     print(f"Run data: {bridge.store.root}")
@@ -31,11 +30,6 @@ async def serve(args):
     servers = [operator, worker] if args.public_url else [operator]
     tasks = [asyncio.create_task(server.serve()) for server in servers]
     try:
-        if args.open:
-            while not all(server.started for server in servers) and not any(task.done() for task in tasks):
-                await asyncio.sleep(.05)
-            if all(server.started for server in servers):
-                webbrowser.open(url)
         await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
     finally:
         operator.should_exit = worker.should_exit = True
@@ -53,7 +47,6 @@ def main():
     parser.add_argument("--heartbeat-timeout", type=int, default=1800)
     parser.add_argument("--max-runtime", type=int, default=21600)
     parser.add_argument("--max-upload-mib", type=int, default=4096)
-    parser.add_argument("--open", action="store_true")
     args = parser.parse_args()
     if args.operator_port == args.worker_port:
         parser.error("Operator and worker ports must differ.")

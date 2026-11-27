@@ -1,24 +1,22 @@
-# Local upload bridge
+# Reference reconstruction API
 
 Run from the repository root after installing the reconstruction dependencies. The default sends one private input dataset to your own Kaggle account, starts a private notebook and polls its status and logs. Downloads are verified before becoming available. Kaggle retains the dataset and kernel in your account until you remove them.
 
 ```powershell
-python -m reconstruction.bridge --open
+python -m reconstruction.bridge
 ```
 
 For an existing HTTPS callback service, start the bridge in callback mode instead:
 
 ```powershell
-python -m reconstruction.bridge --public-url https://YOUR-WORKER-TUNNEL --open
+python -m reconstruction.bridge --public-url https://YOUR-WORKER-TUNNEL
 ```
 
-Forward the HTTPS tunnel **only to `http://127.0.0.1:8766`**. The browser operator UI uses `127.0.0.1:8765`; its private printed URL signs in automatically. The worker listener has no route that creates or retries runs, even when a valid worker token is supplied. Keep the tunnel URL stable throughout an active run.
-
-The page uploads the selected video, shows upload progress and the latest saved run, then polls actual worker stage updates. Stages without meaningful percentages display an indeterminate progress bar. Refreshing preserves status. Completed results expose local download links for `scene.splat` and `run_manifest.json`. The main frontend is independent.
+When callback mode is used, forward HTTPS only to http://127.0.0.1:8766. The operator API is bound to 127.0.0.1:8765. Its secret is stored in operator-secret.txt under the storage directory. Pass it using X-Operator-Secret. The API accepts raw video uploads, reports saved task status and serves verified artifacts. The main frontend uses the production backend's API contract. This bridge remains a reference API for backend development.
 
 Default state lives in `reconstruction/runs/bridge/`. Each run has a readable `run.json`, private source `video`, and completed artifacts. The directory also holds `operator-secret.txt`; keep the directory private because it contains source videos and authentication credentials. Start only one bridge process per storage directory. Run records are written with flush, fsync, and atomic replacement. Restart using the same storage directory and tunnel URL. Active workers can resume callbacks; interrupted uploads/submissions become actionable failures rather than triggering duplicate submissions.
 
-Failed and timed out runs can be retried from the UI. Retry preserves the input, archives old artifacts, increments the attempt, and revokes the previous worker token. Before retrying an ambiguous Kaggle submission, inspect the Kaggle kernel list to avoid duplicate compute. The bridge does not cancel an already running remote kernel. Its defaults allow 30 minutes without worker activity and six hours per attempt; adjust `--heartbeat-timeout` and `--max-runtime` for your workload. Kaggle failure status is checked every minute, including failures before the notebook sends its first callback.
+Failed and timed out runs can be retried through `POST /api/runs/{id}/retry`. Retry preserves the input, archives old artifacts, increments the attempt, and revokes the previous worker token. Before retrying an ambiguous Kaggle submission, inspect the Kaggle kernel list to avoid duplicate compute. Its defaults allow 30 minutes without worker activity and six hours per attempt. Adjust `--heartbeat-timeout` and `--max-runtime` for your workload. Kaggle failure status is checked every minute.
 
 In private storage mode, a temporary output-download failure retries automatically up to five times. Retrying a remote kernel that has already completed resumes output retrieval and verification without launching another kernel. Verified downloaded originals are retained so a restart during local installation can finish safely.
 
