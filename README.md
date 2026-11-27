@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Hotel Room Reconstruction: Backend (FastAPI)
 
 Login, video upload, background 3D reconstruction, 3D viewer URLs, logs, roles and permissions.
@@ -63,3 +64,10 @@ The viewer URL is signed and valid 10 minutes (viewers can't send auth headers),
 ## Limits to know
 - SQLite and an in-process worker suit a single server. For several servers, use PostgreSQL (`DATABASE_URL`) and a separate worker, and move the login lockout to Redis.
 - Registration is open by default; set `ALLOW_REGISTRATION=false` to create users via the admin only.
+=======
+# Hotel_Room_Reconstruction
+
+The [main frontend](frontend/README.md) handles account access, video upload, reconstruction progress and the interactive 3D result. Run the model using the [reconstruction setup](reconstruction/README.md). Recorded development measurements are in the [validation report](reconstruction/VALIDATION.md).
+
+Backend integration is described in the [service handoff](reconstruction/INTEGRATION.md).
+>>>>>>> 236f6b8dda76cf91cd1b974addae174087a17074
