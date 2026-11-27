@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>3D room walkthrough</title>
+<style>
+html,body{margin:0;height:100%;overflow:hidden;background:#242424;color:#fff;font:15px system-ui}
+canvas{display:block;touch-action:none}
+header{position:absolute;top:12px;left:12px;right:12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:#202020df;padding:12px;border-radius:8px}
+button,select,input{font:inherit}
+button,select{padding:6px}
+#status{position:absolute;bottom:16px;left:16px;background:#202020df;padding:8px;border-radius:6px}
+#movement{position:absolute;bottom:75px;left:16px;display:grid;grid-template-columns:repeat(3,54px);gap:6px}
+#movement button{touch-action:none;user-select:none;background:#202020df;color:white;border:1px solid #888;border-radius:6px;height:44px}
+#movement button:active{background:#45647c}
+</style>
+<header>
+  <label>Scene <select id="scene"></select></label>
+  <button id="reset">Return to start</button>
+  <label>Speed <input id="speed" type="range" min=".1" max="5" step=".1" value="1"></label>
+  <span>Drag to look · W A S D / arrow keys to move · Q/E down/up · Shift faster</span>
+</header>
+<nav id="movement" aria-label="Move through scene">
+  <button data-move="up" aria-label="Move up">Up</button>
+  <button data-move="forward" aria-label="Move forward">↑</button>
+  <button data-move="down" aria-label="Move down">Down</button>
+  <button data-move="left" aria-label="Move left">←</button>
+  <button data-move="back" aria-label="Move backward">↓</button>
+  <button data-move="right" aria-label="Move right">→</button>
+</nav>
+<p id="status" role="status">Loading scene…</p>
+<script type="module" src="/app.js"></script>
+</html>
